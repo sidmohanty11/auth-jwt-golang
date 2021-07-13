@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth-jwt-Golang</title>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="root">
+        <header class="text-gray-600 body-font">
+            <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center justify-between">
+                <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+                    <img width="50px"
+                        src="https://image.shutterstock.com/image-vector/user-protection-icon-vector-black-260nw-1671093850.jpg"
+                        alt="logo" />
+                    <span class="ml-3 text-xl">Auth-jwt-Golang</span>
+                </a>
+                <div>
+                    <button id="logout"
+                        class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">Logout
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+                            <path d="M5 12h14M12 5l7 7-7 7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <section class="text-gray-600 body-font">
+            <form id="login_form">
+                <div class="container px-5 py-24 mx-auto flex flex-wrap items-center">
+                    <div class="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
+                        <h1 class="title-font font-medium text-3xl text-gray-900" id="the_title">Welcome to go auth</h1>
+                    </div>
+                    <div
+                        class="lg:w-2/6 md:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
+                        <h2 class="text-gray-900 text-lg font-medium title-font mb-5">Login</h2>
+                        <div class="relative mb-4">
+                            <label for="email" class="leading-7 text-sm text-gray-600">Email</label>
+                            <input type="email" id="email" name="email"
+                                class="w-full bg-white rounded border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                        </div>
+                        <div class="relative mb-4">
+                            <label for="password" class="leading-7 text-sm text-gray-600">Password</label>
+                            <input type="password" id="password" name="password"
+                                class="w-full bg-white rounded border border-gray-300 focus:border-red-500 focus:ring-2 focus:ring-red-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                        </div>
+                        <button type="submit"
+                            class="text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Login</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+    <script>
+        const loginForm = document.getElementById("login_form");
+        const h1 = document.getElementById("the_title");
+        const logoutBtn = document.getElementById("logout");
+
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const emailValue = event.target.email.value;
+            const passwordValue = event.target.password.value;
+            const res = await fetch("http://localhost:8000/login", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ email: emailValue, password: passwordValue })
+            });
+            location.reload();
+        });
+
+        const theUserEffectCall = async () => {
+            const getUser = await fetch("http://localhost:8000/user", {
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+            });
+
+            const respOfGet = await getUser.json();
+            h1.append(`. Hiiiiiiii, ${respOfGet.user.name && respOfGet.user.name}`);
+        };
+
+        logoutBtn.addEventListener("click", async () => {
+            await fetch("http://localhost:8000/logout", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+            location.reload();
+        })
+
+        window.onload = theUserEffectCall();
+    </script>
+</body>
+
+</html>
